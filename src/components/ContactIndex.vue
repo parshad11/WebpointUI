@@ -1,6 +1,14 @@
 <template>
   <section class="innerpage-wrap">
     <div class="container">
+
+      <div>
+  <h1>Quotes load</h1>
+  <ul>
+    <li v-for="(quote, index) in quoteCollector" :key="index">{{ quote }}</li>
+  </ul>
+  <button @click.prevent="getQuotes">Refresh quote</button>
+</div>
       <b-alert
       v-if="showAlertNoData"
       :variant="alertType"
@@ -68,6 +76,7 @@
         </b-container>
       </b-modal>
     </div>
+
   </section>
 </template>
 
@@ -109,11 +118,13 @@ export default ({
       alertType: '',
       alertMessage: '',
       dismissLabel: 'Dismiss',
+      quoteCollector:[],
     }
   },
   mounted() {
     let app = this;
-    app.getList();
+    // app.getList();
+    app.getQuotes();
   },
   methods: {
     getList() {
@@ -227,6 +238,19 @@ export default ({
         });
         }
     },
+
+    getQuotes: function() {
+  if (this.error == 0) {
+    let app = this;
+    axios.get('/get-random-quotes')
+      .then(function(response) {
+        app.quoteCollector = response.data.data; 
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+},
 
     showAlert(resmessage) {
       let app = this;
